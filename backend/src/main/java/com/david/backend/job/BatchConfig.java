@@ -28,6 +28,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.david.backend.entity.TipoTransacao;
 import com.david.backend.entity.Transacao;
 import com.david.backend.entity.TransacaoCNAB;
 
@@ -79,10 +80,15 @@ public class BatchConfig {
     ItemProcessor<TransacaoCNAB, Transacao> processor() {
         return item -> {
 
+            var tipoTransacao = TipoTransacao.findByTipo(item.tipo());
+            var valorNormalizado = item.valor()
+                    .divide(new BigDecimal(100))
+                    .multiply(tipoTransacao.getSinal());
+
             var transacao = new Transacao(
-                    null, item.tipo(), null, null, item.cpf(), item.cartao(), null, item.donoDaLoja().trim(),
+                    null, item.tipo(), null, valorNormalizado, item.cpf(), item.cartao(), null,
+                    item.donoDaLoja().trim(),
                     item.nomeDaLoja().trim())
-                    .comValor(item.valor().divide(BigDecimal.valueOf(100)))
                     .comData(item.data())
                     .comHora(item.hora());
 
