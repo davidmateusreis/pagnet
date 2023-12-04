@@ -19,7 +19,7 @@ public class CNABController {
         this.cnabService = cnabService;
     }
 
-    @CrossOrigin(origins = { "http://localhost:9090" })
+    @CrossOrigin(origins = { "http://localhost:9090", "https://frontend-pagnet-q0ri.onrender.com" })
     @PostMapping("upload")
     public String upload(@RequestParam("file") MultipartFile file) throws Exception {
         cnabService.uploadCnabFile(file);
